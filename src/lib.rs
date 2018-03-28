@@ -4,9 +4,13 @@ extern crate futures;
 extern crate gotham;
 extern crate hyper;
 
+use std::panic::RefUnwindSafe;
+
 use failure::Fail;
 use futures::future::err;
 use gotham::handler::{HandlerError, HandlerFuture, IntoHandlerError};
+use gotham::pipeline::chain::PipelineHandleChain;
+use gotham::router::builder::{DefineSingleRoute, DrawRoutes, RouterBuilder};
 use gotham::state::State;
 use hyper::StatusCode;
 
@@ -16,8 +20,6 @@ enum ResourceError {
 }
 
 pub trait Resource {
-    type Id: Sized;
-
     fn index(state: State) -> Box<HandlerFuture> {
         let error = ResourceError::MethodNotAllowed;
         Box::new(err((
@@ -60,5 +62,19 @@ pub trait Resource {
                 StatusCode::MethodNotAllowed,
             ),
         )))
+    }
+}
+
+pub trait ResourceRouterBuilder {
+    fn resource<R: Resource + 'static>(&mut self, path: &str);
+}
+
+impl<'a, C, P> ResourceRouterBuilder for RouterBuilder<'a, C, P>
+where
+    C: PipelineHandleChain<P> + Copy + Send + Sync + 'static,
+    P: RefUnwindSafe + Send + Sync + 'static,
+{
+    fn resource<R: Resource + 'static>(&mut self, path: &str) {
+        RouterBuilder::get(self, path).to(R::index);
     }
 }
