@@ -19,16 +19,6 @@ use gotham::pipeline::single::single_pipeline;
 use gotham_rest::{Resource, ResourceId, ResourceIdPathExtractor, ResourceRouterBuilder};
 use hyper::StatusCode;
 
-pub fn say_hello(state: State) -> Box<HandlerFuture> {
-    let res = create_response(
-        &state,
-        StatusCode::Ok,
-        Some((format!("Hello, Bookstore!").into_bytes(), mime::TEXT_PLAIN)),
-    );
-
-    Box::new(ok((state, res)))
-}
-
 #[derive(Serialize)]
 struct Book {
     id: i32,
@@ -89,7 +79,6 @@ fn router() -> Router {
     let (chain, pipelines) = single_pipeline(new_pipeline().build());
 
     build_router(chain, pipelines, |route| {
-        route.get("/").to(say_hello);
         route.resource::<BookResource>("/books");
     })
 }
