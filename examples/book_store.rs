@@ -11,12 +11,12 @@ extern crate serde_json;
 use futures::future::ok;
 use gotham::handler::HandlerFuture;
 use gotham::http::response::create_response;
-use gotham::state::State;
+use gotham::state::{FromState, State};
 use gotham::router::Router;
 use gotham::router::builder::*;
 use gotham::pipeline::new_pipeline;
 use gotham::pipeline::single::single_pipeline;
-use gotham_rest::{Resource, ResourceRouterBuilder};
+use gotham_rest::{Resource, ResourceId, ResourceIdPathExtractor, ResourceRouterBuilder};
 use hyper::StatusCode;
 
 pub fn say_hello(state: State) -> Box<HandlerFuture> {
@@ -37,16 +37,43 @@ struct Book {
 
 struct BookResource;
 
+fn get_books() -> Vec<Book> {
+    vec![
+        Book {
+            id: 1,
+            name: "Programming Rust".to_string(),
+        },
+    ]
+}
+
+fn get_book(id: ResourceId) -> Option<Book> {
+    get_books()
+        .into_iter()
+        .filter(|ref b| b.id == id)
+        .take(1)
+        .next()
+}
+
 impl Resource for BookResource {
     fn index(state: State) -> Box<HandlerFuture> {
-        let books = vec![
-            Book {
-                id: 1,
-                name: "Programming Rust".to_string(),
-            },
-        ];
+        let books = get_books();
 
         let json = serde_json::to_string(&books).unwrap();
+
+        let res = create_response(
+            &state,
+            StatusCode::Ok,
+            Some((json.into_bytes(), mime::APPLICATION_JSON)),
+        );
+
+        Box::new(ok((state, res)))
+    }
+
+    fn get(state: State) -> Box<HandlerFuture> {
+        let id = ResourceIdPathExtractor::borrow_from(&state).id();
+        let book = get_book(id);
+
+        let json = serde_json::to_string(&book).unwrap();
 
         let res = create_response(
             &state,
