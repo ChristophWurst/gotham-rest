@@ -16,7 +16,7 @@ use gotham::router::Router;
 use gotham::router::builder::*;
 use gotham::pipeline::new_pipeline;
 use gotham::pipeline::single::single_pipeline;
-use gotham_rest::{Resource, ResourceId, ResourceIdPathExtractor, ResourceRouterBuilder};
+use gotham_rest::{Resource, ResourceIdPathExtractor, ResourceRouterBuilder};
 use hyper::StatusCode;
 
 #[derive(Serialize)]
@@ -36,7 +36,7 @@ fn get_books() -> Vec<Book> {
     ]
 }
 
-fn get_book(id: ResourceId) -> Option<Book> {
+fn get_book(id: i32) -> Option<Book> {
     get_books()
         .into_iter()
         .filter(|ref b| b.id == id)
@@ -45,6 +45,8 @@ fn get_book(id: ResourceId) -> Option<Book> {
 }
 
 impl Resource for BookResource {
+    type Id = i32;
+
     fn index(state: State) -> Box<HandlerFuture> {
         let books = get_books();
 
