@@ -6,11 +6,13 @@ RESTful extensions for the Gotham web framework
 This library tries to eliminate some boilerplate code required to write a Gotham REST service.
 
 ```rust
-use gotham_rest::{Resource, ResourceId, ResourceIdPathExtractor, ResourceRouterBuilder};
+use gotham_rest::{Resource, ResourceIdPathExtractor, ResourceRouterBuilder};
 
 struct BookResource;
 
 impl Resource for BookResource {
+    type Id = i32;
+
     fn index(state: State) -> Box<HandlerFuture> {
         let books = get_books();
         let json = serde_json::to_string(&books).unwrap();
