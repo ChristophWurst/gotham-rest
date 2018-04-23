@@ -1,17 +1,17 @@
 [package]
-name = "gotham_rest"
+name = "gotham-rest"
 version = "0.2.0"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 
 [dependencies]
-failure = "^0.1"
-futures = "*"
-gotham = "^0.2"
-gotham_derive = "^0.2"
+failure = "0.1"
+futures = "0.1"
+gotham = "0.2"
+gotham_derive = "0.2"
 hyper = "*"
-serde = "^1.0"
-serde_derive = "^1.0"
+serde = "1.0"
+serde_derive = "1.0"
 
 [dev-dependencies]
 mime = "*"
-serde_json = "^1.0"
+serde_json = "1.0"
