@@ -9,7 +9,7 @@ use serde::de::DeserializeOwned;
 
 use error::ResourceError;
 
-pub trait ResourceId: DeserializeOwned + RefUnwindSafe + Send + Sized + Sync {}
+pub trait ResourceId: DeserializeOwned + RefUnwindSafe + Send + Sync {}
 
 impl ResourceId for i32 {}
 impl ResourceId for i64 {}
