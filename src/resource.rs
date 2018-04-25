@@ -11,9 +11,11 @@ use error::ResourceError;
 
 pub trait ResourceId: DeserializeOwned + RefUnwindSafe + Send + Sync {}
 
-impl ResourceId for i32 {}
-impl ResourceId for i64 {}
-impl ResourceId for String {}
+impl<ID> ResourceId for ID
+where
+    ID: DeserializeOwned + RefUnwindSafe + Send + Sync,
+{
+}
 
 pub trait Resource {
     type Id: ResourceId;
