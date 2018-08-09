@@ -5,7 +5,7 @@ authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 
 [dependencies]
 failure = "0.1"
-futures = "0.1"
+futures = "0.2"
 gotham = "0.2"
 gotham_derive = "0.2"
 hyper = "*"
